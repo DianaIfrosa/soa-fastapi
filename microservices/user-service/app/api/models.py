@@ -1,7 +1,8 @@
 from pydantic import BaseModel
 
 class UserIn(BaseModel):
-    name: str
+    username: str
+    password: str
 
 class UserOut(UserIn):
     id: int
