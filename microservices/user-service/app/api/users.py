@@ -5,7 +5,7 @@ from app.api import db_manager
 from fastapi.security import OAuth2PasswordRequestForm
 from app.api import authentication_manager
 from app.api.authentication_manager import pwd_context, get_current_user
-# from app.api.log_producer import publish_log
+from app.api.log_producer import publish_log
 
 users_router = APIRouter()
 service = "users"

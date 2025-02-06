@@ -1,9 +1,16 @@
 services:
   db:
     image: postgres:12.1-alpine
-    # restart: always
+    restart: always
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data_db:/var/lib/postgresql/data/
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5  
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=diana123
@@ -14,115 +21,130 @@ services:
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     # restart: always
     depends_on:
-      - db
-      # - kafka
-    volumes:
-      - ./user-service/:/app/
+      db: 
+        condition: service_healthy
+      kafka:
+          condition: service_healthy
+    # volumes:
+    #   - ./user-service/:/app/
     ports:
       - 8001:8000
     environment:
       - DATABASE_URI=postgresql://postgres:diana123@db/postgres # +asyncpg
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 
   product_service:
     build: ./product-service
     # restart: always
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     depends_on:
-      - db
-      # - kafka
-    volumes:
-      - ./product-service/:/app/
+      db: 
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    # volumes:
+    #   - ./product-service/:/app/
     ports:
       - 8002:8000
     environment:
       - DATABASE_URI=postgresql://postgres:diana123@db/postgres
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 
   order_service:
     build: ./order-service
     # restart: always
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     depends_on:
-      - db
-      # - kafka
-    volumes:
-      - ./order-service/:/app/
+      db: 
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    # volumes:
+    #   - ./order-service/:/app/
     ports:
       - 8003:8000
     environment:
       - DATABASE_URI=postgresql://postgres:diana123@db/postgres
       - PRODUCT_SERVICE_HOST_URL=http://product_service:8000/api/v1/products/
       - USER_SERVICE_HOST_URL=http://user_service:8000/api/v1/users/
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 
-  # logging_service:
-  #   build: ./logging-service
-  #   # restart: always
-  #   command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-  #   depends_on:
-  #     - db
-  #     - kafka
-  #   volumes:
-  #     - ./logging-service/:/app/
-  #   ports:
-  #     - 8004:8000
-  #   environment:
-  #     - DATABASE_URI=postgresql://postgres:diana123@db/postgres    
-  #     - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
-  #     - KAFKA_GROUP_ID=my-group
+  logging_service:
+    build: ./logging-service
+    # restart: always
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    depends_on:
+      db: 
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    # volumes:
+    #   - ./logging-service/:/app/
+    ports:
+      - 8004:8000
+    environment:
+      - DATABASE_URI=postgresql://postgres:diana123@db/postgres    
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_GROUP_ID=my-group
 
-  # zookeeper:
-  #   image: confluentinc/cp-zookeeper:latest
-  #   environment:
-  #     ZOOKEEPER_CLIENT_PORT: 2181
-  #     ZOOKEEPER_TICK_TIME: 2000
-  #   ports:
-  #     - 2181:2181
-  #     - 2888:2888
-  #     - 3888:3888
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    restart: always  
+    ports:
+      - "22181:2181" 
 
-  # kafka:
-  #   image: confluentinc/cp-kafka:latest
-  #   links:
-  #     - zookeeper
-  #   environment:
-  #     KAFKA_BROKER_ID: 1
-  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  #     KAFKA_LISTENERS: INTERNAL://:29092,EXTERNAL://:9092
-  #     KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
-  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-  #     KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-  #   ports:
-  #     - 9092:9092
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka
+    restart: always
+    depends_on:
+      - zookeeper  
+    ports:
+      - "29092:29092"
+      - "9092:9092"  
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,PLAINTEXT://0.0.0.0:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,PLAINTEXT://localhost:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_MESSAGE_MAX_BYTES: 10485760
+      KAFKA_SOCKET_REQUEST_MAX_BYTES: 100001200
+    healthcheck:
+      test: nc -z localhost 9092 || exit -1
+      start_period: 60s
+      interval: 5s
+      timeout: 200s
+      retries: 20  
 
-  # init-kafka:
-  #   image: confluentinc/cp-kafka:latest
-  #   depends_on:
-  #     - kafka
-  #   entrypoint: [ '/bin/sh', '-c' ]
-  #   command: |
-  #     "
-  #     # blocks until kafka is reachable
-  #     kafka-topics --bootstrap-server kafka:29092 --list
+  init-kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - kafka
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --bootstrap-server kafka:9092 --list
 
-  #     echo -e 'Creating kafka topics'
-  #     kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic my-topic --replication-factor 1 --partitions 1
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic service-logs --replication-factor 1 --partitions 1
 
-  #     echo -e 'Successfully created the following topics:'
-  #     kafka-topics --bootstrap-server kafka:29092 --list
-  #     "    
-
-  # kafdrop:
-  #   image: obsidiandynamics/kafdrop
-  #   restart: "no"
-  #   environment:
-  #     KAFKA_BROKERCONNECT: "kafka:29092"
-  #   ports:
-  #     - 9000:9000
-  #   depends_on:
-  #     - kafka    
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server kafka:9092 --list
+      "  
+    environment:
+      KAFKA_BROKER_ID: ignored
+      KAFKA_ZOOKEEPER_CONNECT: ignored  
 
   nginx:
     image: nginx:latest
@@ -134,7 +156,7 @@ services:
       - user_service
       - product_service
       - order_service
-      # - logging_service
+      - logging_service
 
 volumes:
   postgres_data_db:

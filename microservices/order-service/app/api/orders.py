@@ -5,7 +5,7 @@ from typing import List
 from app.api import db_manager
 from app.api.helpers.product_helper import is_product_id_valid
 from app.api.helpers.user_helper import is_user_id_valid
-# from app.api.log_producer import publish_log
+from app.api.log_producer import publish_log
 
 service = "orders"
 root = "/orders/"

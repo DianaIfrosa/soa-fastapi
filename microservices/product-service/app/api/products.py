@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from app.api.models import ProductOut, ProductIn
 from typing import List
 from app.api import db_manager
-# from app.api.log_producer import publish_log
+from app.api.log_producer import publish_log
 
 service = "products"
 root = "/products/"
