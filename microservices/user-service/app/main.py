@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.api.users import users_router
+from app.api.authentication_validations import auth_router
 from app.api.db import metadata, database, engine
 
 metadata.create_all(engine)
@@ -15,3 +16,4 @@ async def shutdown():
     await database.disconnect()
 
 app.include_router(users_router, prefix='/api/v1/users', tags=['users'])
+app.include_router(auth_router, prefix='/api/v1/users', tags=['validations'])
