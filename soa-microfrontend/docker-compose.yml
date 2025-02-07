@@ -1,0 +1,30 @@
+app-frontend:
+    build: ./my-app
+    ports:
+      - "3000:80"
+
+user-frontend:
+    build: ./users
+    ports:
+      - "3001:80"
+product-frontend:
+    build: ./products
+    ports:
+      - "3002:80" 
+
+order-frontend:
+    build: ./orders
+    ports:
+      - "3003:80"
+
+nginx:
+    image: nginx:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx_config.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app-frontend
+      - user-frontend
+      - product-frontend
+      - order-frontend

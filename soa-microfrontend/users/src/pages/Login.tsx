@@ -1,12 +1,40 @@
 import React, { useState } from "react";
 
-const Login = () => {
+interface LoginProps {
+  onLoginSuccess: (userData: { access_token: string; token_type: string, username: string }) => void; // Callback function
+}
+
+const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    // Call backend /users/login endpoint
-    console.log("Logging in...");
+  const handleLogin = async () => {
+    try {
+      const requestBody = {
+        username: email,
+        password: password,
+      };
+
+      const response = await fetch("http://localhost:8080/api/v1/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Login successful:", data);
+        onLoginSuccess({...data, email});
+      } else {
+        const errorData = await response.json();
+        alert("Username or password not correct!")
+        console.error("Login failed:", errorData);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
   };
 
   return (

@@ -23,9 +23,10 @@ async def create_order(order: OrderIn): # current_user: dict = Depends(is_user_l
     if not is_user_id_valid(order.user_id):
         raise HTTPException(status_code=404, detail=f"User not found for id: {order.user_id}")
     
-    #check product exists
-    if not is_product_id_valid(order.product_id):
-        raise HTTPException(status_code=404, detail=f"Product not found for id: {order.product_id}")
+    #check products exist
+    for id in order.product_ids:
+        if not is_product_id_valid(id):
+            raise HTTPException(status_code=404, detail=f"Product not found for id: {id}")
     
     order_id = await db_manager.add_order(order)
     response = {

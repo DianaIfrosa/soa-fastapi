@@ -1,12 +1,39 @@
 import React, { useState } from "react";
 
-const SignUp = () => {
+interface SignupProps {
+  onSignupSuccess: () => void; // Callback function
+}
+
+const SignUp : React.FC<SignupProps> = ({ onSignupSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignUp = () => {
-    // Call backend /users/signup endpoint
-    console.log("Signing up...");
+  const handleSignUp = async () => {
+      try {
+        const requestBody = {
+          username: email,
+          password: password,
+        };
+  
+        const response = await fetch("http://localhost:8080/api/v1/users/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Signup successful:", data);
+          onSignupSuccess();
+        } else {
+          const errorData = await response.json();
+          console.error("Signup failed:", errorData);
+        }
+      } catch (error) {
+        console.error("Error during signup:", error);
+      }
   };
 
   return (

@@ -45,17 +45,13 @@ async def get_current_user_details(current_user: dict = Depends(get_current_user
     # publish_log(service, root + "/me/", "Fetched personal user data")
     return user
     
-#todo: make protected, accessibile only for admin?
 @users_router.get("/{user_id}/")
-async def get_user_by_id(user_id: int, current_user: dict = Depends(get_current_user)):
-    if current_user["username"] == "admin": # todo: change it
+async def get_user_by_id(user_id: int):
         user = await db_manager.get_user_by_id(user_id)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         # publish_log(service, root + "/{user_id}/", "Fetched user data based on id")
         return user
-    else:
-       raise HTTPException(status_code=401, detail="You are not allowed!") 
 
 #todo: make protected, accessibile only for admin?
 @users_router.get("/{username}/")

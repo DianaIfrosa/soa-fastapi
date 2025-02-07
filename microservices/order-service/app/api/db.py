@@ -1,4 +1,4 @@
-from sqlalchemy import (Column, Integer, MetaData, String, Table,
+from sqlalchemy import (Column, Integer, MetaData, String, Table, ARRAY,
                         create_engine)
 
 from databases import Database
@@ -14,7 +14,7 @@ orders = Table(
     metadata,
     Column('id', Integer, primary_key=True),
     Column('user_id', Integer),
-    Column('product_id', Integer),
+    Column('product_ids', ARRAY(Integer)),
     Column('date', String(50)),
     Column('address', String(150))
 )

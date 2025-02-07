@@ -8,22 +8,20 @@ type Product = {
   price: number;
 };
 
-// const products = [
-//   Product (id= 1, name ="Product 1", price= 19.99),
-//   { id: 2, name: "Product 2", price: 29.99 },
-//   { id: 3, name: "Product 3", price: 39.99 },
-// ];
+type ProductsListProps = {
+  basket: {id: number, name: string; price: number }[];
+  addToBasket: (product: { id:number, name: string; price: number }) => void;
+};
 
-
-const Products = () => {
-  const [basket, setBasket] = useState<{ id: number; name: string; price: number }[]>([]);
+const ProductsList = ({ basket, addToBasket }: ProductsListProps) => {
+  // const [basket, setBasket] = useState<{ id: number; name: string; price: number }[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const addToBasket = (product: { id: number; name: string; price: number }) => {
-    setBasket([...basket, product]);
-  };
+  // const addToBasket = (product: { id: number; name: string; price: number }) => {
+  //   setBasket([...basket, product]);
+  // };
 
   useEffect(() => {
     axios
@@ -44,11 +42,11 @@ const Products = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">Products</h1>
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
           <ul className="divide-y divide-gray-200">
+            
             {products.map((product) => (
               <li key={product.id} className="p-4 hover:bg-gray-50 transition-colors">
                 <div className="flex justify-between items-center">
@@ -71,8 +69,7 @@ const Products = () => {
           <MiniBasket items={basket} />
         </div>
       </div>
-    </div>
   );
 };
 
-export default Products;
+export default ProductsList;

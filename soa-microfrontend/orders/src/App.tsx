@@ -5,7 +5,8 @@ import "./index.css";
 
 const App = () => (
     <div className="mt-10 text-3xl mx-auto max-w-6xl">
-    <Order />
+    {/* <Order basket = {[]} onOrderSuccess={}/> */}
+    Hello!
     </div>
   );
 

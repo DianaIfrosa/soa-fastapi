@@ -1,27 +1,72 @@
-import React from "react";
+import React,  { useState, Suspense } from "react";
 import ReactDOM from "react-dom/client";
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate  } from "react-router-dom";
 
 import "./index.css";
 
-import ProductsList from "products/ProductsList";
-import PlaceOrderButton from "orders/PlaceOrderButton";
+import Login from "users/Login";
+import Signup from "users/Signup";
+import ProductsPage from "./ProductsPage";
+import OrderPage from "./OrderPage";
 
-const App = () => (
-    <div className="text-3xl mx-auto max-w-6xl">
-        <ProductsList />
-        <div className="text-center">
-            <img
-                src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp"
-                className="rounded-full w-32 mb-4 mx-auto"
-                alt="Avatar"
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+};
+
+const App = () => {
+  const [productsSelected, setProductsSelected] = useState<Product[]>([]);
+  const navigate = useNavigate();
+
+  const onOrderSuccess = () => {
+    navigate("/products");
+  }
+
+  const handleLoginSuccess = (userData: { access_token: string; token_type: string, username: string }) => {
+    // Redirect to the products page after successful login
+    navigate("/products");
+    // Optionally, store the user data in local storage
+    localStorage.setItem("user", JSON.stringify(userData));
+  };
+
+  const handleSignupSuccess = () => {
+    alert("Signed up successfully!")
+    navigate("/login")
+  };
+
+  const handleOrderFromProductsPage = (products: { id: number, name: string, price: number }[]) => {
+    setProductsSelected(products)
+    navigate("/order");
+  };
+
+  return (
+          <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/login" element={
+                <Login onLoginSuccess={handleLoginSuccess}/>
+            }
             />
-            <h5 className="text-xl font-medium leading-tight mb-2">John Doe</h5>
-            <p className="text-gray-500">Web designer</p>
-        </div>
-        <PlaceOrderButton />
-    </div>
-);
-
+            <Route path="/signup" element={
+                <Signup onSignupSuccess={handleSignupSuccess}/>
+            }
+            />
+            <Route path="/products" element={
+              <ProductsPage onOrderPressed={handleOrderFromProductsPage}/>} />
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="/order" element={
+                <OrderPage basket = {productsSelected} onOrderSuccess={onOrderSuccess}/>
+            }
+            />
+          </Routes>
+          
+          </Suspense>
+    );
+};
 
 const root = ReactDOM.createRoot(document.getElementById("app") as HTMLElement);
-root.render(<App />);
+root.render(
+  <Router>
+    <App />
+  </Router>
+);
