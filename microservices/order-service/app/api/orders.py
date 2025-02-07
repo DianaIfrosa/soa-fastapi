@@ -8,7 +8,7 @@ from app.api.helpers.user_helper import is_user_id_valid
 from app.api.log_producer import publish_log
 
 service = "orders"
-root = "/orders/"
+rootName = "/orders/"
 
 orders_router = APIRouter()
 
@@ -33,12 +33,12 @@ async def create_order(order: OrderIn): # current_user: dict = Depends(is_user_l
         'id': order_id,
         **order.dict()
     }
-    # publish_log(service, root, "Created a new order")
+    publish_log(service, rootName, "Created a new order")
     return response
 
 @orders_router.get("/", response_model=List[OrderOut])
 async def get_all_orders():
-#    publish_log(service, root, "Fetched orders data")
+   publish_log(service, rootName, "Fetched orders data")
    return await db_manager.get_all_orders()
 
 @orders_router.get("/{id}/")
@@ -46,7 +46,7 @@ async def get_order(id: int):
     order = await db_manager.get_order(id)
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    # publish_log(service, root + "/{id}/", "Fetched order data based on id")
+    publish_log(service, rootName + "/{id}/", "Fetched order data based on id")
     return order
 
 @orders_router.get("/user/{user_id}/")
@@ -57,5 +57,5 @@ async def get_orders_by_user(user_id: int):
     order = await db_manager.get_order_by_user(user_id)
     if not order:
         raise HTTPException(status_code=404, detail=f"Order not found for user id: {user_id}")
-    # publish_log(service, root + "/{user_id}/", "Fetched order data based on user id")
+    publish_log(service, rootName + "/{user_id}/", "Fetched order data based on user id")
     return order
