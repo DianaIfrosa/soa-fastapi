@@ -7,7 +7,7 @@ async def get_all_logs():
 
 def add_log(payload: Log):
     try:
-        query = logs.insert().values(**payload.dict())
+        query = logs.insert().values(**payload)
         database.execute(query=query)
         print(f"Logged: {payload}")
     except Exception as e:

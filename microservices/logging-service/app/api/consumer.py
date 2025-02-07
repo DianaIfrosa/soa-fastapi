@@ -21,24 +21,7 @@ consumer.subscribe([KAFKA_TOPIC])
 
 def process_log(log_data: Log):
     try:
+        print(f"Logged in process: {log_data}")
         add_log(log_data)
-        print(f"Logged: {log_data}")
     except Exception as e:
-        print(f"Error inserting log into database: {e}")
-
-
-    # logging.info("in consume logs")
-
-    # async with SessionLocal() as session:
-    #     for message in consumer:
-    #         log_data = eval(message.value)  # Convert string to dict
-    #         log_entry = AuditLog(
-    #             service=log_data["service"],
-    #             endpoint=log_data["endpoint"],
-    #             message=log_data["message"],
-    #         )
-    #         session.add(log_entry)
-    #         await session.commit()
-
-# if __name__ == "__main__":
-#     asyncio.run(consume_logs())
+        print(f"Error inserting log into database (process step): {e}")
