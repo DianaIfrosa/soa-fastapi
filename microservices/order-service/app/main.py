@@ -8,7 +8,7 @@ metadata.create_all(engine)
 app = FastAPI(openapi_url="/api/v1/orders/openapi.json", docs_url="/api/v1/orders/docs")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace with your frontend URL
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
