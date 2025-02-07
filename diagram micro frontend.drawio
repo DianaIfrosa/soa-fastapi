@@ -1,0 +1,46 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36" version="26.0.11">
+  <diagram name="Page-1" id="tCwJdjHEo803TyybjLfu">
+    <mxGraphModel dx="3150" dy="1735" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="6PniIrwgafCV-Lmyu1BP-1" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-227" y="41" width="694" height="392" as="geometry" />
+        </mxCell>
+        <mxCell id="6PniIrwgafCV-Lmyu1BP-2" value="my-app host container - products page" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="-285" y="-4" width="292" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="6PniIrwgafCV-Lmyu1BP-3" value="user microfrontend" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-162" y="86" width="494" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6PniIrwgafCV-Lmyu1BP-4" value="products microfrontend" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-162" y="193" width="494" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6PniIrwgafCV-Lmyu1BP-5" value="orders microfrontend" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-158" y="297" width="494" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6PniIrwgafCV-Lmyu1BP-7" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-233" y="567" width="694" height="392" as="geometry" />
+        </mxCell>
+        <mxCell id="6PniIrwgafCV-Lmyu1BP-8" value="my-app host container - orders page" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="-283" y="522" width="276" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="6PniIrwgafCV-Lmyu1BP-9" value="user microfrontend" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-168" y="612" width="494" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="6PniIrwgafCV-Lmyu1BP-11" value="orders microfrontend" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-164" y="708" width="494" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="6PniIrwgafCV-Lmyu1BP-12" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-1082" y="34" width="694" height="392" as="geometry" />
+        </mxCell>
+        <mxCell id="6PniIrwgafCV-Lmyu1BP-13" value="my-app host container - login/signup page" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="-1152" y="-11" width="316" height="31" as="geometry" />
+        </mxCell>
+        <mxCell id="6PniIrwgafCV-Lmyu1BP-14" value="user microfrontend" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-1017" y="79" width="568" height="306" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
