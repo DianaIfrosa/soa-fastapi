@@ -10,17 +10,16 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
   const handleLogin = async () => {
     try {
-      const requestBody = {
-        username: email,
-        password: password,
-      };
-
+      const formData = new URLSearchParams();
+      formData.append('username', email);
+      formData.append('password', password);
+      
       const response = await fetch("http://localhost:8080/api/v1/users/login", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+         "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: JSON.stringify(requestBody),
+        body: formData.toString()
       });
 
       if (response.ok) {
